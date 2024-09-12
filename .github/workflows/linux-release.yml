@@ -1,0 +1,52 @@
+name: Linux Release
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  linux-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Deps
+        run: yarn install
+
+      - name: Build
+        run: yarn build
+
+      - name: Package
+        run: |
+          mkdir -p chatgpt-next-web/.next
+          mv public .next/standalone chatgpt-next-web/
+          mv .next/static next/server ./chatgpt-next-web/.next/
+          zip -r chatgpt-next-web.zip chatgpt-next-web
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chatgpt-next-web.zip
+          path: chatgpt-next-web.zip
+
+      - name: Generate release tag
+        id: gen_tag
+        run: |
+          echo "::set-output name=release_tag::Build_v$(date +"%Y%m%d_%H%M%S")"
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          files: chatgpt-next-web.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ steps.gen_tag.outputs.release_tag }}
