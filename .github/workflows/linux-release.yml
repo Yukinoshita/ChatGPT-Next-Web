@@ -35,7 +35,7 @@ jobs:
           sed -i 's/title.*/title: "Aozora.Chat",/' app/layout.tsx
           sed -i 's/description.*/description: "May This Journey Lead Us Starward.",/' app/layout.tsx
           # emoji src
-          sed -i 's#https://fastly.jsdelivr.net/npm/emoji-datasource-apple#https://cdn.staticfile.net/emoji-datasource-apple/15.0.1#' app/components/emoji.tsx
+          sed -i 's#https://fastly.jsdelivr.net/npm/emoji-datasource-apple#https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/emoji-datasource-apple/7.0.2#' app/components/emoji.tsx
 
       - name: Build
         run: yarn build
