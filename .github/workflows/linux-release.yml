@@ -46,7 +46,7 @@ jobs:
           mv server static standalone/.next
           mv ../public standalone
           mv standalone chatgpt-next-web
-          zip -r chatgpt-next-web.zip chatgpt-next-web
+          zip -r ../chatgpt-next-web.zip chatgpt-next-web
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
