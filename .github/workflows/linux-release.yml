@@ -4,7 +4,7 @@ permissions:
 
 on:
   workflow_dispatch:
-  push:
+  # push:
 
 jobs:
   linux-build:
@@ -17,19 +17,35 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install Deps
-        run: yarn install
+        run: yarn install && npm i sharp
+
+      - name: Modify
+        run: |
+          # sidebar
+          sed -i 's/NextChat/Aozora.Chat/' app/components/sidebar.tsx
+          sed -i 's/Build your own AI assistant./May This Journey Lead Us Starward./' app/components/sidebar.tsx
+          # configs
+          sed -i 's/avatar.*/avatar: "2b55",/' app/store/config.ts
+          sed -i 's/sendPreviewBubble.*/sendPreviewBubble: false,/' app/store/config.ts
+          sed -i 's/dontShowMaskSplashScreen.*,/dontShowMaskSplashScreen: true,/' app/store/config.ts
+          # title
+          sed -i 's/title.*/title: "Aozora.Chat",/' app/layout.tsx
+          sed -i 's/description.*/description: "May This Journey Lead Us Starward.",/' app/layout.tsx
+          # emoji src
+          sed -i 's#https://fastly.jsdelivr.net/npm/emoji-datasource-apple#https://cdn.staticfile.net/emoji-datasource-apple/15.0.1#' app/components/emoji.tsx
 
       - name: Build
-        run: npm i sharp && yarn build
+        run: yarn build
 
       - name: Package
         run: |
-          mkdir -p chatgpt-next-web/.next
-          mv public .next/standalone chatgpt-next-web/
-          mv .next/static .next/server ./chatgpt-next-web/.next/
+          cd .next && rm -r standalone/.next/server
+          mv server static standalone/.next
+          mv ../public standalone
+          mv standalone chatgpt-next-web
           zip -r chatgpt-next-web.zip chatgpt-next-web
 
       - name: Upload Artifact
