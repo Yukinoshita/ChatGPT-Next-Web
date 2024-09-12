@@ -23,13 +23,13 @@ jobs:
         run: yarn install
 
       - name: Build
-        run: yarn build
+        run: npm i sharp && yarn build
 
       - name: Package
         run: |
           mkdir -p chatgpt-next-web/.next
           mv public .next/standalone chatgpt-next-web/
-          mv .next/static next/server ./chatgpt-next-web/.next/
+          mv .next/static .next/server ./chatgpt-next-web/.next/
           zip -r chatgpt-next-web.zip chatgpt-next-web
 
       - name: Upload Artifact
